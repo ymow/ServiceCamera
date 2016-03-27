@@ -19,6 +19,7 @@ import java.io.IOException;
 public class MainActivity extends Activity {
 
     private Button bt_recordingButton, bt_playingVideoButton;
+    private MediaPlayer mediaPlayer;
     private VideoView mVideoView;
     private String TAG = "MainActivity";
 
@@ -28,6 +29,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.USE_DEFAULT_STREAM_TYPE);
         mVideoView = (VideoView) findViewById(R.id.videoview);
         bt_playingVideoButton = (Button) findViewById(R.id.play_video_button);
         bt_recordingButton = (Button) findViewById(R.id.recording_button);
@@ -56,7 +59,5 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(this, CameraService.class);
         startService(intent);
     }
-
-
-
+    
 }
