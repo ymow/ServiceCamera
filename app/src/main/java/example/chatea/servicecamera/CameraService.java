@@ -125,12 +125,8 @@ public class CameraService extends Service {
 
                         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
-<<<<<<< HEAD
-                        mMediaRecorder.setOutputFile(DataPath);
-=======
                         final String recordedVideoPath = Util.getOutputMediaFile(Util.MEDIA_TYPE_VIDEO).getPath();
                         mMediaRecorder.setOutputFile(recordedVideoPath);
->>>>>>> master
 
                         mMediaRecorder.setPreviewDisplay(holder.getSurface());
 
