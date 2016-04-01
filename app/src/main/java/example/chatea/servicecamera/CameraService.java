@@ -24,6 +24,7 @@ public class CameraService extends Service {
 
     private Camera mCamera;
     private MediaRecorder mMediaRecorder;
+    public static String DataPath;
 
     public CameraService() {
     }
@@ -71,7 +72,7 @@ public class CameraService extends Service {
 
                 sv.setZOrderOnTop(true);
                 sh.setFormat(PixelFormat.TRANSPARENT);
-
+                DataPath  = Util.getOutputMediaFile(Util.MEDIA_TYPE_VIDEO).getPath();
 
                 sh.addCallback(new SurfaceHolder.Callback() {
                     @Override
@@ -108,12 +109,12 @@ public class CameraService extends Service {
                         mMediaRecorder = new MediaRecorder();
                         mMediaRecorder.setCamera(mCamera);
 
-                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+                        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
                         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
-                        mMediaRecorder.setOutputFile(Util.getOutputMediaFile(Util.MEDIA_TYPE_VIDEO).getPath());
+                        mMediaRecorder.setOutputFile(DataPath);
 
                         mMediaRecorder.setPreviewDisplay(holder.getSurface());
 
