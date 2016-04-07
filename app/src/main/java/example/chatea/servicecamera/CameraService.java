@@ -8,14 +8,13 @@ import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-
 import android.os.IBinder;
 import android.os.ResultReceiver;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -93,7 +92,7 @@ public class CameraService extends Service {
             case COMMAND_STOP_RECORDING:
                 handleStopRecordingCommand(intent);
                 break;
-            default:
+            default: 
                 throw new UnsupportedOperationException("Cannot start service with illegal commands");
         }
 
@@ -238,4 +237,5 @@ public class CameraService extends Service {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
 }
