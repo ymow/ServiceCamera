@@ -20,8 +20,11 @@ public class PhonecallReceiver extends BroadcastReceiver {
     private static Date callStartTime;
     private static boolean isIncoming;
     private static String savedNumber;  //because the passed incoming is only valid in ringing
-    private boolean mRecording;
     private static String TAG = "PhonecallReceiver";
+//    private static String PHONE_STATUS_IDLE = "phoneState_IDLE";
+//    private static String PHONE_STATUS_CALLING = "phoneState_CALLING";
+//    private static String PHONE_STATUS_RINGING = "phoneState_RINGING";
+//    private static String PHONE_STATUS_OFFHOOK = "phoneState_OFFHOOK";
 
 
     @Override
@@ -31,7 +34,7 @@ public class PhonecallReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.NEW_OUTGOING_CALL")) {
             savedNumber = intent.getExtras().getString("android.intent.extra.PHONE_NUMBER");
             Log.d(TAG, "NEW_OUTGOING_CALL");
-            tryToRecording(context);   //tryToRecording when dialer to someone
+            tryToRecording(context, -1);   //tryToRecording when dialer to someone
         } else {
             String stateStr = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
             String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
@@ -43,7 +46,7 @@ public class PhonecallReceiver extends BroadcastReceiver {
                 state = TelephonyManager.CALL_STATE_OFFHOOK;
             } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 state = TelephonyManager.CALL_STATE_RINGING;
-                tryToRecording(context);   //tryToRecording when get someone incoming call
+                tryToRecording(context, state);   //tryToRecording when get someone incoming call
             }
 
             onCallStateChanged(context, state, number);
@@ -109,45 +112,11 @@ public class PhonecallReceiver extends BroadcastReceiver {
         lastState = state;
     }
 
-    private void startRecording(Context c) {
-        setRecording(true);
 
-        Intent intent = new Intent(c, CameraService.class);
-        ResultReceiver receiver = new ResultReceiver(new Handler()) {
-            @Override
-            protected void onReceiveResult(int resultCode, Bundle resultData) {
-                handleRecordingResult(resultCode, resultData);
-            }
-        };
-        intent.putExtra(CameraService.RESULT_RECEIVER, receiver);
-        c.startService(intent);
-
-        Toast.makeText(c, "Start recording...", Toast.LENGTH_SHORT).show();
-    }
-
-    private void tryToRecording(Context c) {
-        if (mRecording) {
-            Toast.makeText(c, "Already recording...", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        startRecording(c);
-    }
-
-    private void setRecording(boolean recording) {
-        mRecording = recording;
-    }
-
-    private void handleRecordingResult(int resultCode, Bundle resultData) {
-        setRecording(false);
-        if (resultCode == CameraService.RECORD_RESULT_OK) {
-            String videoPath = resultData.getString(CameraService.VIDEO_PATH);
-            Log.d(TAG, "videoPath =" + videoPath);
-//            Toast.makeText(c, "Record succeed, file saved in " + videoPath,
-//                    Toast.LENGTH_LONG).show();
-        } else {
-            Log.d(TAG, "Recording failed.");
-//            Toast.makeText(this, "Recording failed...", Toast.LENGTH_SHORT).show();
-        }
+    private void tryToRecording(Context c, int currentState) {
+        Intent intentPhoneStatus = new Intent(c, CameraService.class);
+        intentPhoneStatus.putExtra("PHONE_CURRENT_STATUS", currentState);
+        intentPhoneStatus.putExtra("PHONE_LAST_STATUS", lastState);
+        c.startService(intentPhoneStatus);
     }
 }

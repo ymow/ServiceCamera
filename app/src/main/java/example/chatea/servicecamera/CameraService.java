@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import android.os.IBinder;
 import android.os.ResultReceiver;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,11 +21,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class CameraService extends Service {
     private static final String TAG = CameraService.class.getSimpleName();
 
+    private static int lastState = TelephonyManager.CALL_STATE_IDLE;
     public static final String RESULT_RECEIVER = "resultReceiver";
     public static final String VIDEO_PATH = "recordedVideoPath";
 
@@ -93,11 +96,45 @@ public class CameraService extends Service {
             case COMMAND_STOP_RECORDING:
                 handleStopRecordingCommand(intent);
                 break;
-            default:
+            default: //TODO New Case for PhoneCallReceiver
                 throw new UnsupportedOperationException("Cannot start service with illegal commands");
         }
 
         return START_STICKY;
+    }
+
+    private void setRecording(boolean recording) {
+        mRecording = recording;
+    }
+
+
+    private void handlePhoneCallStatus(Intent intent) {
+        //PhoneCallReceiver Listener to start/stop recording.
+        int phoneCurrentStatus = intent.getIntExtra("PHONE_CURRENT_STATUS",0);
+        int phoneLastStatus = intent.getIntExtra("PHONE_LAST_STATUS",0);
+        switch (phoneCurrentStatus) {
+            case -1: // Calling Status
+                handleStartRecordingCommand(null);
+                Log.d(TAG, "CALL_STATE_CALLING");
+                break;
+            case TelephonyManager.CALL_STATE_RINGING:
+                handleStartRecordingCommand(null);
+                Log.d(TAG, "CALL_STATE_RINGING");
+                break;
+            case TelephonyManager.CALL_STATE_OFFHOOK:
+                //Transition of ringing->offhook are pickups of incoming calls.  Nothing done on them
+                if (lastState != TelephonyManager.CALL_STATE_RINGING) {
+                    Log.d(TAG, "CALL_STATE_OFFHOOK");
+                }
+                break;
+            case TelephonyManager.CALL_STATE_IDLE:
+                Log.d(TAG, "CALL_STATE_IDLE");
+                //Went to idle-  this is the end of a call.  What type depends on previous state(s)
+                if (lastState == TelephonyManager.CALL_STATE_RINGING) {
+                    //Ring but no pickup-  a miss
+                }
+                break;
+        }
     }
 
     private void handleStartRecordingCommand(Intent intent) {
@@ -238,4 +275,5 @@ public class CameraService extends Service {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
+
 }
