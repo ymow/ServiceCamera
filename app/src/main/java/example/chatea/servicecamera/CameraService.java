@@ -92,7 +92,7 @@ public class CameraService extends Service {
             case COMMAND_STOP_RECORDING:
                 handleStopRecordingCommand(intent);
                 break;
-            default: //TODO New Case for PhoneCallReceiver
+            default: 
                 throw new UnsupportedOperationException("Cannot start service with illegal commands");
         }
 
