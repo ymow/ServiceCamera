@@ -58,23 +58,28 @@ public class PhonecallReceiver extends BroadcastReceiver {
 
     //Derived classes should override these to respond to specific events of interest
     protected void onIncomingCallStarted(Context ctx, String number, Date start) {
+        setRecording(true);
         tryToRecording(ctx);
     }
 
     protected void onOutgoingCallStarted(Context ctx, String number, Date start) {
+        setRecording(true);
         tryToRecording(ctx);
     }
 
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
         tryToStopRecording(ctx);
+        setRecording(false);
     }
 
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
         tryToStopRecording(ctx);
+        setRecording(false);
     }
 
     protected void onMissedCall(Context ctx, String number, Date start) {
         tryToStopRecording(ctx);
+        setRecording(false);
     }
 
     //Deals with actual events
@@ -148,6 +153,8 @@ public class PhonecallReceiver extends BroadcastReceiver {
         if (!mRecording) {
             stopRecording(context);
             Toast.makeText(context, "stop recording...", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "recording?" + String.valueOf(mRecording), Toast.LENGTH_SHORT).show();
         }
     }
 
