@@ -169,6 +169,7 @@ public class CameraService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         switch (intent.getIntExtra(START_SERVICE_COMMAND, COMMAND_NONE)) {
+            //TODO Sometime will crash when answer the call (intent.getIntExtra will be null)
             case COMMAND_START_RECORDING:
                 handleStartRecordingCommand(intent);
                 break;
