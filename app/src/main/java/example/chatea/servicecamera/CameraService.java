@@ -9,6 +9,7 @@ import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 import android.telephony.TelephonyManager;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +30,7 @@ public class CameraService extends Service {
     private static final String TAG = CameraService.class.getSimpleName();
 
     private static int lastState = TelephonyManager.CALL_STATE_IDLE;
+    public static final String PHONECALL_RECEIVER = "resultReceiver";
     public static final String RESULT_RECEIVER = "resultReceiver";
     public static final String VIDEO_PATH = "recordedVideoPath";
 
@@ -64,6 +67,82 @@ public class CameraService extends Service {
         intent.putExtra(RESULT_RECEIVER, resultReceiver);
         context.startService(intent);
     }
+
+//    private void tryToRecording() {
+//        if (mRecording) {
+//            Toast.makeText(this, "Already recording...", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        startRecording();
+//    }
+//
+//    private void startRecording() {
+//        setRecording(true);
+//
+//        ResultReceiver receiver = new ResultReceiver(new Handler()) {
+//            @Override
+//            protected void onReceiveResult(int resultCode, Bundle resultData) {
+//                handleStartRecordingResult(resultCode, resultData);
+//            }
+//        };
+//
+//        CameraService.startToStartRecording(this, receiver);
+//    }
+//
+//
+//    private void stopRecording() {
+//        setRecording(false);
+//
+//        ResultReceiver receiver = new ResultReceiver(new Handler()) {
+//            @Override
+//            protected void onReceiveResult(int resultCode, Bundle resultData) {
+//                handleStopRecordingResult(resultCode, resultData);
+//            }
+//        };
+//
+//        CameraService.startToStopRecording(this, receiver);
+//    }
+//
+//    private void handleStartRecordingResult(int resultCode, Bundle resultData) {
+//        if (resultCode == CameraService.RECORD_RESULT_OK) {
+//            Toast.makeText(this, "Start recording...", Toast.LENGTH_SHORT).show();
+//        } else {
+//            // start recording failed.
+//            Toast.makeText(this, "Start recording failed...", Toast.LENGTH_SHORT).show();
+//            setRecording(false);
+//        }
+//    }
+//
+//    private void handleStopRecordingResult(int resultCode, Bundle resultData) {
+//
+//        Intent intent = new Intent(this, CameraService.class);
+//        ResultReceiver receiver = new ResultReceiver(new Handler()) {
+//            @Override
+//            protected void onReceiveResult(int resultCode, Bundle resultData) {
+//                handleRecordingResult(resultCode, resultData);
+//            }
+//        };
+//        intent.putExtra(CameraService.RESULT_RECEIVER, receiver);
+//        startService(intent);
+//
+//        Toast.makeText(this, "Start recording...", Toast.LENGTH_SHORT).show();
+//    }
+//
+//    private void handleRecordingResult(int resultCode, Bundle resultData) {
+//        setRecording(false);
+//
+//        if (resultCode == CameraService.RECORD_RESULT_OK) {
+//            String videoPath = resultData.getString(CameraService.VIDEO_PATH);
+//            Toast.makeText(this, "Record succeed, file saved in " + videoPath,
+//                    Toast.LENGTH_LONG).show();
+//        } else {
+//
+//            Toast.makeText(this, "Record failed...", Toast.LENGTH_SHORT).show();
+//
+//        }
+//    }
+
 
     /**
      * Used to take picture.
@@ -108,17 +187,17 @@ public class CameraService extends Service {
     }
 
 
-    private void handlePhoneCallStatus(Intent intent) {
+    public static void handlePhoneCallStatus(Intent intent) {
         //PhoneCallReceiver Listener to start/stop recording.
         int phoneCurrentStatus = intent.getIntExtra("PHONE_CURRENT_STATUS",0);
         int phoneLastStatus = intent.getIntExtra("PHONE_LAST_STATUS",0);
         switch (phoneCurrentStatus) {
             case -1: // Calling Status
-                handleStartRecordingCommand(null);
+//                tryToRecording();
                 Log.d(TAG, "CALL_STATE_CALLING");
                 break;
             case TelephonyManager.CALL_STATE_RINGING:
-                handleStartRecordingCommand(null);
+//                tryToRecording();
                 Log.d(TAG, "CALL_STATE_RINGING");
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
