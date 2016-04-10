@@ -53,6 +53,7 @@ public class CameraService extends Service {
 
     private boolean mRecording = false;
     private String mRecordingPath = null;
+    private String mRecordingPathCache = null;
 
     public CameraService() {
     }
@@ -235,6 +236,7 @@ public class CameraService extends Service {
         Bundle b = new Bundle();
         b.putString(VIDEO_PATH, mRecordingPath);
 
+        mRecordingPathCache = mRecordingPath;
         mRecordingPath = null;
 
         resultReceiver.send(RECORD_RESULT_OK, b);
@@ -249,8 +251,8 @@ public class CameraService extends Service {
         try {
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             Notification.Builder builder = new Notification.Builder(this);
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("RecordingPath", mRecordingPath);
+            Intent intent = new Intent(this, PhoneCallVideoPlayer.class);
+            intent.putExtra(VIDEO_PATH, mRecordingPathCache);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             PendingIntent contentIndent = PendingIntent.getActivity(
                     this, 0, intent,

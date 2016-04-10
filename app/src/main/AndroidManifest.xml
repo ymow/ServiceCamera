@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".myVideoList">
+        <activity android:name=".PhoneCallVideoPlayer"
+                    android:theme="@style/Theme.AppCompat">
         </activity>
 
         <service
