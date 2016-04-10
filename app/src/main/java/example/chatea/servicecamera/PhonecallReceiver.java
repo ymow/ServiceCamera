@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import java.util.Date;
 
-public class PhonecallReceiver extends BroadcastReceiver {
+public class PhoneCallReceiver extends BroadcastReceiver {
 
     //The receiver will be recreated whenever android feels like it.  We need a static variable to remember data between instantiations
 
